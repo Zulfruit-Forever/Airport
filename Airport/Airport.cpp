@@ -110,7 +110,7 @@ public:
     }
     void removeFlight(std::string fligthNum) {
 
-        Node<FlightRec>* removal;
+        Node<FlightRec>* removal = nullptr;
         Node<FlightRec>* temp = head;
 
         while (temp != nullptr) {
@@ -132,7 +132,7 @@ public:
                     }
                     else {
                         temp->previous->next = nullptr;
-                        removal = temp;   break;
+                        removal = temp;  break;
                     }
 
 
@@ -143,6 +143,8 @@ public:
 
             }
             temp = temp->next;
+            if (temp == nullptr)
+                std::cout << "\n#That Flight Couldnt be Found\n";
         }
         //exterminatus for the node 
         delete removal;
