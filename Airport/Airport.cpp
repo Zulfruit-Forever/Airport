@@ -8,9 +8,6 @@
 #include "Header.h" 
 
 
-
-//List<FlightRec> flights;
-
 enum FlightType { Departure, Arrival };
 struct TimeRec {
     int hour; // 0 to 23
@@ -28,7 +25,6 @@ template <class T>
 struct Node {
     T entry;
     Node<T>* next;
-    Node<T>* current = nullptr;
     Node<T>* previous = nullptr;
     
     // constructors
@@ -43,6 +39,8 @@ Node<T>::Node() {
         next = nullptr;
         previous = nullptr;
     }
+    else
+        std::cout << "\nBad Alloc";
   
 }
 
@@ -52,6 +50,8 @@ Node<T>::Node(T item, Node<T>* n) {
         entry = item;
         next = n;
     }
+    else
+        std::cout << "\nBad Alloc";
 }
 
 
@@ -60,13 +60,6 @@ class List {
 public:  
     List() {head = nullptr;}
 
-    //Node& myNodes;
-    /*
-    bool CompareTimes() {
-
-
-
-    }*/
     //this func must automatically sort the flights by time
     void insertSort(FlightRec& x) {
 
@@ -79,28 +72,90 @@ public:
          }
          else {//head points to something
              //sorting algo
+             //sum in minutes
+             int sumTemp = temp->entry.Time.hour * 60 + temp->entry.Time.min;
+             int sumCurNext;
+             int sumCur;
+            
+             Node<T>* previousNode = current;
+
              while (current != nullptr) {
-                 //temp node time is bigger than the current time
-                 if ((temp->entry.Time.hour * 60 + temp->entry.Time.min) > (current->entry.Time.hour * 60 + current->entry.Time.min)) {
-                     temp->next = current->next;
-                     //temp node time is bigger than the current->next
-                     if ((current->next->entry.Time.hour * 60 + current->next->entry.Time.min) > (temp->entry.Time.hour * 60 + temp->entry.Time.min) {
+                 sumCur = current->entry.Time.hour * 60 + current->entry.Time.min;
 
-
-
-                     }
+                 //temp node time is bigger than the current time and there is no next node
+                 if ((sumTemp > sumCur) && (current->next == nullptr)) {
                      current->next = temp;
+                     temp->previous = current;
+                     break;
                  }
-                 current = current->next;
+                 sumCurNext = current->next->entry.Time.hour * 60 + current->next->entry.Time.min;
+
+                 //temp node time is bigger than the current time and there is NEXT node exists and its bigger than temp Node
+                 if ((sumTemp > sumCur) && (sumCurNext > sumTemp)) {
+                     current->next->previous = temp;
+
+                     temp->next = current->next;
+                     
+                     current = temp;
+
+                 }
+                 else {
+                     previousNode = current;//now this nodes point to the same place, 
+                     current->previous = previousNode;
+                     current = current->next;
+                 }
+                     
              }
-             temp->next = head;
-             head = temp;
-
          }
-
- 
-  
     }
+    void removeFlight(std::string fligthNum) {
+
+        Node<FlightRec>* removal;
+        Node<FlightRec>* temp = head;
+
+        while (temp != nullptr) {
+           
+            if (temp->entry.FlightNO == fligthNum) {
+
+                //previos node doest exists
+                if (temp->previous == nullptr) {
+                    head = head->next;
+                    removal = temp; break;
+                }
+                //previos node exists
+                else {
+                    //temp->next maybe does not exists
+                    if (temp->next != nullptr) {
+                        temp->previous->next = temp->next;
+                        removal = temp; break;
+           
+                    }
+                    else {
+                        temp->previous->next = nullptr;
+                        removal = temp;   break;
+                    }
+
+
+                }
+                   
+
+                std::cout << "\nFlight :" << fligthNum << " removed";
+
+            }
+            temp = temp->next;
+        }
+        //exterminatus for the node 
+        delete removal;
+        removal = nullptr;
+
+    }
+
+    bool flightNumExistance(std::string fligthNum) {
+
+
+    }
+
+
     void print() const{
         Node<FlightRec>* temp = head;
 
@@ -114,25 +169,18 @@ public:
             //long cout for Flight Number  Destination  Time
             std::cout << "\nFlight Number: " << temp->entry.FlightNO
                 << std::endl << "Destination: " << temp->entry.Destination //Destination
-                << std::endl << "Time: " << temp->entry.Time.hour << ":" << temp->entry.Time.min   //Time
+                << std::endl << "Time: " << correctTime(temp->entry.Time.hour ,temp->entry.Time.min)   //Time
                 << std::endl << "Delay? " << ((temp->entry.Delay == true) ? " Delayed " : "")
-                << std::endl << "Expected Time: " << temp->entry.ExpectedTime.hour << ":" << temp->entry.ExpectedTime.min
+                << std::endl << "Expected Time: " << correctTime(temp->entry.ExpectedTime.hour, temp->entry.ExpectedTime.min)
                 << std::endl;  //Is Delayed?
 
             temp = temp->next;
 
         }
-
-
-
     }
-
-
 private:
     Node<T>* head;
 };
-
-
 
 
 int main()
@@ -144,8 +192,6 @@ int main()
     int timeH,timeM;
     std::string ans;
     
-    
-
     do {
         // menu
         std::cout << "\nMenu Options:\n";
@@ -153,7 +199,8 @@ int main()
         std::cout << "2. Change arrival time\n";
         std::cout << "3. Modify flight time or delay status\n";
         std::cout << "4. Print all flights\n";
-        std::cout << "5. Exit\n";
+        std::cout << "5. Remove flight by FlightNumber\n";
+        std::cout << "6. Exit\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
 
@@ -180,7 +227,7 @@ int main()
                 std::cin >> timeH >> timeM;
                 // correctTime(timeH, timeM);
 
-            } while (!correctTime(timeH, timeM));
+            } while (correctTime(timeH, timeM) == "Error");
             // Insert values
             x3.Time.hour = timeH;
             x3.Time.min = timeM;
@@ -200,7 +247,7 @@ int main()
                 std::cin >> timeH >> timeM;
                 // correctTime(timeH, timeM);
 
-            } while (!correctTime(timeH, timeM));
+            } while (correctTime(timeH, timeM) == "Error");
 
             x3.ExpectedTime.hour = timeH;
             x3.ExpectedTime.min = timeM;
@@ -219,7 +266,7 @@ int main()
             do {
                 std::cin >> timeH >> timeM;
 
-            } while (!correctTime(timeH, timeM));
+            } while (correctTime(timeH, timeM) == "Error");
 
             x3.ExpectedTime.hour = timeH;
             x3.ExpectedTime.min = timeM;
@@ -236,7 +283,7 @@ int main()
             do {
                 std::cin >> timeH >> timeM;
 
-            } while (!correctTime(timeH, timeM));
+            } while (correctTime(timeH, timeM)=="Error");
 
             x3.Time.hour = timeH;
             x3.Time.min = timeM;
@@ -257,8 +304,19 @@ int main()
             flights.print();
             break;
         }
+        case '5': {
+            do {
 
-        case '5': { // Exit
+                std::cout << "Add the FlightNumber for removal, 5 symbols, |ABC|ABC|NUM|NUM|NUM|\n";
+                std::cin >> ans;
+
+            } while (!correctCode(ans));
+
+            flights.removeFlight(ans);
+
+            break;
+        }
+        case '6': { // Exit
             break;
         }
 
@@ -266,11 +324,9 @@ int main()
             std::cout << "Invalid choice. Please try again.\n";
         }
 
-    } while (choice!=5);
+    } while (choice!=6);
 
     std::cout << "Exiting the program. Goodbye!\n";
-
-
 
 
 
@@ -283,8 +339,6 @@ bool correctCode(std::string Code) {
     //first 2 symbols 
     if (!(Code[0] >= 'A' && Code[0] <= 'Z' && Code[1] >= 'A' && Code[1] <= 'Z')) return 0; 
     
-
-
     if (!(Code[2] >= '0' && Code[2] <= '9' &&
         Code[3] >= '0' && Code[3] <= '9' &&
         Code[4] >= '0' && Code[4] <= '9')) {
@@ -294,11 +348,17 @@ bool correctCode(std::string Code) {
     return 1; 
 }
 
-bool correctTime(int h, int m) {
+std::string correctTime(int h, int m) {
+    std::string corTime = "";
     //Maybe arrival time is not known yet
-    if (!(h == NULL || m == NULL));
-    else if (h > 23 || h < 0 || m > 59 || m < 0) return 0;//check for right input
+    if ((h == NULL && m == NULL)) 
+        return "00:00";
+    else if (h > 23 || h < 0 || m > 59 || m < 0)  return "Error"; //check for right input
 
-    return 1;
+    if (h < 9) corTime += "0";
+    corTime +=std::to_string(h) + ":";
+    if (m < 9) corTime += "0";
+    corTime += std::to_string(m);
+    return corTime;
 }
 
