@@ -60,7 +60,7 @@ public:
     //this func must automatically sort the flights by time
 
     bool exportTXT();
-    bool importTXT() const;
+    bool importTXT();
 
     void insertSort(FlightRec& x) {
 
@@ -283,24 +283,21 @@ public:
             
 
 
+    }
+    void clear() {
 
+        Node<FlightRec>* temp = head;
+        Node<FlightRec>* removal = nullptr;
 
-        void clearList() const {
-            
-            Node<FlightRec>* temp = head;
-            Node<FlightRec>* removal=nullptr;
-            while (temp != nullptr) {
-                removal - temp;
-                delete removal;
-                temp = temp->next;
-                removal = nullptr;
+        while (temp != nullptr) {
+            removal = temp;
+            delete removal;
+            temp = temp->next;
+            removal = nullptr;
 
-
-            }
-            head = nullptr;
 
         }
-
+        head = nullptr;
     }
         
 

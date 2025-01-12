@@ -1,2 +1,5 @@
-#Current time is :
+#Current time is :14:15
 Departures
+CY123 | London | 23:15 |  Delayed  | 14:15
+#Current time is :14:15
+Arrivals

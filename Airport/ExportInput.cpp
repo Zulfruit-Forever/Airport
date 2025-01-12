@@ -23,8 +23,6 @@ bool List<FlightRec>::exportTXT() {
 	output <<"#Current time is :"<<correctTime(timeH,timeM)<< "\nDepartures\n";
 	
 	
-		
-	
 
 
 	while (temp != nullptr) {
@@ -56,16 +54,19 @@ bool List<FlightRec>::exportTXT() {
 
 
 
-
-
 	output.close();
 	
 	return 1;
 }
 
-bool List<FlightRec>::importTXT() const{
+bool List<FlightRec>::importTXT(){
 	
+	Node<FlightRec>* temp = head;
+
 	std::ifstream input;
+	std::string line;
+	//clear memo before inputing
+	clear();
 
 	input.open("flights.txt");
 
@@ -75,6 +76,21 @@ bool List<FlightRec>::importTXT() const{
 		return false;
 	}
 
+	while (!input.eof()) {
+		while (std::getline(input, line)) {
+
+			if (line.find("Departures")) temp->entry.Ftype = Departure;
+			if (line.find("Arrivals")) temp->entry.Ftype = Arrival;
+
+
+
+
+		}
+
+
+
+
+	}
 
 
 	
