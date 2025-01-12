@@ -7,10 +7,9 @@
 
 #include "Header.h" 
 
-
-
 int main()
 {
+    //pretty much space here, yeah?
     menu();
 
     return 1; 

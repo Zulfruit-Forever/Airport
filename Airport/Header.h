@@ -7,13 +7,16 @@
 
 std::string correctTime(int h, int m);
 bool correctCode(std::string Code);
-void menu();
+void menu() ;
 
 
 #endif // Proto
-
+//Here is the List Class with all insides
 #ifndef LIST_H
 #define LIST_H
+
+#include <iostream>
+#include <string>
 
 enum FlightType { Departure, Arrival };
 struct TimeRec {
@@ -72,43 +75,63 @@ public:
 
         Node<FlightRec>* current = head;
 
-        if (head == nullptr) {
+        if (head == nullptr){   
             head = temp;
+            temp->previous = head;
         }
         else {//head points to something
             //sorting algo
             //sum in minutes
             int sumTemp = temp->entry.Time.hour * 60 + temp->entry.Time.min;
-            int sumCurNext;
-            int sumCur;
 
             Node<T>* previousNode = current;
 
             while (current != nullptr) {
-                sumCur = current->entry.Time.hour * 60 + current->entry.Time.min;
+                int sumCur = current->entry.Time.hour * 60 + current->entry.Time.min;
 
-                //temp node time is bigger than the current time and there is no next node
-                if ((sumTemp > sumCur) && (current->next == nullptr)) {
-                    current->next = temp;
-                    temp->previous = current;
-                    break;
+                //temp node time is bigger than the current time 
+                if (sumTemp >= sumCur) {
+                    //next node doesnt exists
+                    if (current->next == nullptr) {
+                        current->next = temp;
+                        temp->previous = current;
+                        break;
+
+                    }
+                    int sumCurNext = current->next->entry.Time.hour * 60 + current->next->entry.Time.min;
+                    if (sumCurNext > sumTemp) {
+                        temp->next = current->next;
+                        current->next->previous = temp;
+                        current->next = temp;
+                        temp->previous = current;
+                        break;
+
+                    }
+              
                 }
-                sumCurNext = current->next->entry.Time.hour * 60 + current->next->entry.Time.min;
-
+                //temp is less than current
+                else if (sumTemp < sumCur) {
+                    
+                    if (current->previous == head) {
+                        temp->next = current;
+                        head = temp;
+                        current->previous = temp; 
+                        break;
+                    }
+                    int sumCurPrev = current->next->entry.Time.hour * 60 + current->next->entry.Time.min;
+                    if (sumCurPrev > sumTemp) {
+                        temp->next = current;
+                        temp->previous = current->previous;
+                        current->previous->next = temp;
+                        temp->previous = current->previous;
+                        break;
+                    }
+                }
+           
+                
+                current = current->next;
                 //temp node time is bigger than the current time and there is NEXT node exists and its bigger than temp Node
-                if ((sumTemp > sumCur) && (sumCurNext > sumTemp)) {
-                    current->next->previous = temp;
-
-                    temp->next = current->next;
-
-                    current = temp;
-
-                }
-                else {
-                    previousNode = current;//now this nodes point to the same place, 
-                    current->previous = previousNode;
-                    current = current->next;
-                }
+               
 
             }
         }
@@ -124,26 +147,27 @@ public:
             if (temp->entry.FlightNO == fligthNum) {
 
                 //previos node doest exists
-                if (temp->previous == nullptr) {
-                    head = head->next;
-                    removal = temp; break;
+                if (temp->previous == head) {
+                    removal = temp;
+                    head = temp->next;
+                    temp->previous = head;
+                    break;
                 }
                 //previos node exists
                 else {
                     //temp->next maybe does not exists
                     if (temp->next != nullptr) {
                         temp->previous->next = temp->next;
+                        temp->next->previous = temp->previous;
                         removal = temp; break;
 
                     }
-                    else {
+                    else {//next points to nullptr
                         temp->previous->next = nullptr;
                         removal = temp;  break;
                     }
 
-
                 }
-
 
                 std::cout << "\nFlight :" << fligthNum << " removed";
 
@@ -155,11 +179,6 @@ public:
         //exterminatus for the node 
         delete removal;
         removal = nullptr;
-
-    }
-
-    bool flightNumExistance(std::string fligthNum) {
-
 
     }
 
@@ -186,10 +205,85 @@ public:
         }
     }
 
+
+    void changeFlight(std::string fligthNum) {
+        Node<FlightRec>* temp = head;
+
+        
+
+
+
+        if (head->next == nullptr) { std::cout << "List is Empty\nAdd the Flights Firts\n";  return ; }
+
+        char ch; int timeH, timeM;
+        
+        // Modify flight time
+
+        do {
+            std::cout << "\n#Menu#\n1.Change the Flight Time \n2.Change the Expected Time\n3.Change the Raice Delay \n4.Exit\n";
+            std::cin >> ch;
+
+
+            switch (ch) {
+                
+            case '1': {
+
+
+                std::cout << "Enter the new flight time (XX XX, hours minutes):\n";
+                do {
+                    std::cin >> timeH >> timeM;
+
+                } while (correctTime(timeH, timeM) == "Error");
+
+                temp->entry.Time.hour = timeH;
+                temp->entry.Time.min = timeM;
+                break;
+            }
+            case '2': {
+                char ans;
+                // Modify delay status
+                do {
+                    std::cout << "Is Raice delayed? y/n\n";
+                    std::cin >> ans;
+
+                } while (ans != 'y' && ans != 'n');
+
+                temp->entry.Delay = ('y' == ans);
+                std::cout << "Delay status updated successfully!\n";
+
+            }
+            case '3': {
+
+                std::cout << "Enter the Arrival Time (XX XX, hours minutes):\n";
+                do {
+                    std::cin >> timeH >> timeM;
+
+                } while (correctTime(timeH, timeM) == "Error");
+
+                temp->entry.ExpectedTime.hour = timeH;
+                temp->entry.ExpectedTime.min = timeM;
+            
+
+            }
+            case '4': {
+                std::cout<<"\n#Exiting The Choice Menu\n"
+                break;
+            }
+            default: 
+                std::cout << "\nWrnong Input\n";
+            
+            }
+        } while (ch != 4);
+            
+
+    }
+        
+
 private:
     Node<T>* head;
 };
 
-#endif // MY_HEADER_H
+
+#endif 
 
 

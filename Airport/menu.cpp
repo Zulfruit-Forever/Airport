@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include "Header.h"
 
 
@@ -94,30 +95,15 @@ void menu() {
 
         case '3': { // Modify flight time or delay
 
-            if (x3.FlightNO.size() != 5) { std::cout << "\nAdd the Flight first:D\n"; break; }
-
-            // Modify flight time
-            std::cout << "Enter the new flight time (XX XX, hours minutes):\n";
             do {
-                std::cin >> timeH >> timeM;
-
-            } while (correctTime(timeH, timeM) == "Error");
-
-            x3.Time.hour = timeH;
-            x3.Time.min = timeM;
-
-            // Modify delay status
-            do {
-                std::cout << "Is Raice delayed? y/n\n";
+                std::cout << "Enter the Flight Number to change the Time, Delay status\n";
                 std::cin >> ans;
 
-            } while (ans != "y" && ans != "n");
+            } while (!correctCode(ans));
 
-            x3.Delay = ("y" == ans);
-            std::cout << "Flight time and delay status updated successfully!\n";
-            break;
+            flights.changeFlight(ans);
+
         }
-
         case '4': { // Print all flights
             flights.print();
             break;
