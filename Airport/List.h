@@ -1,22 +1,10 @@
-#pragma once
+#include "Prototype.h"
 
-//Checkers
-#ifndef PROTO_H
-#define PROTO_H
-
-
-std::string correctTime(int h, int m);
-bool correctCode(std::string Code);
-void menu() ;
-
-
-#endif // Proto
 //Here is the List Class with all insides
 #ifndef LIST_H
 #define LIST_H
 
-#include <iostream>
-#include <string>
+
 
 enum FlightType { Departure, Arrival };
 struct TimeRec {
@@ -69,6 +57,9 @@ public:
     List() { head = nullptr; }
 
     //this func must automatically sort the flights by time
+
+    bool exportTXT();
+
     void insertSort(FlightRec& x) {
 
         Node<FlightRec>* temp = new Node<FlightRec>(x);
@@ -141,6 +132,13 @@ public:
 
         Node<FlightRec>* removal = nullptr;
         Node<FlightRec>* temp = head;
+        
+        if (head->next = nullptr) {
+            std::cout << "\n#Empty\n";
+            return;
+        }
+            
+
 
         while (temp != nullptr) {
 
@@ -151,7 +149,7 @@ public:
                     removal = temp;
                     head = temp->next;
                     temp->previous = head;
-                    break;
+     
                 }
                 //previos node exists
                 else {
@@ -159,12 +157,12 @@ public:
                     if (temp->next != nullptr) {
                         temp->previous->next = temp->next;
                         temp->next->previous = temp->previous;
-                        removal = temp; break;
+                        removal = temp; 
 
                     }
                     else {//next points to nullptr
                         temp->previous->next = nullptr;
-                        removal = temp;  break;
+                        removal = temp; 
                     }
 
                 }
@@ -173,8 +171,6 @@ public:
 
             }
             temp = temp->next;
-            if (temp == nullptr)
-                std::cout << "\n#That Flight Couldnt be Found\n";
         }
         //exterminatus for the node 
         delete removal;
@@ -196,7 +192,7 @@ public:
             std::cout << "\nFlight Number: " << temp->entry.FlightNO
                 << std::endl << "Destination: " << temp->entry.Destination //Destination
                 << std::endl << "Time: " << correctTime(temp->entry.Time.hour, temp->entry.Time.min)   //Time
-                << std::endl << "Delay? " << ((temp->entry.Delay == true) ? " Delayed " : "")
+                << std::endl << "Delay? " << ((temp->entry.Delay == true) ? " Delayed " : " No Delay ")
                 << std::endl << "Expected Time: " << correctTime(temp->entry.ExpectedTime.hour, temp->entry.ExpectedTime.min)
                 << std::endl;  //Is Delayed?
 
@@ -209,13 +205,11 @@ public:
     void changeFlight(std::string fligthNum) {
         Node<FlightRec>* temp = head;
 
-        
-
-
 
         if (head->next == nullptr) { std::cout << "List is Empty\nAdd the Flights Firts\n";  return ; }
 
-        char ch; int timeH, timeM;
+        char ch; 
+        int timeH, timeM;
         
         // Modify flight time
 
@@ -266,14 +260,14 @@ public:
 
             }
             case '4': {
-                std::cout<<"\n#Exiting The Choice Menu\n"
+                std::cout << "\n#Exiting The Choice Menu\n";
                 break;
             }
             default: 
                 std::cout << "\nWrnong Input\n";
             
             }
-        } while (ch != 4);
+        } while (ch != '4');
             
 
     }
