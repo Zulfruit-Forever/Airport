@@ -56,7 +56,7 @@ class List {
 public:
     List() { head = nullptr; }
 
-    int timeH, timeM;
+    int timeH = 0, timeM = 0;
     //this func must automatically sort the flights by time
 
     bool exportTXT();
@@ -129,18 +129,23 @@ public:
             }
         }
     }
-    std::string checkArrivalTime() {
+    std::string checkArrivalTime(Node<FlightRec>* temp) {
+
+        if (temp==nullptr) return "Error";//maybe i should just used enum types? Maybe but its too late
+
+        if((temp->entry.ExpectedTime.hour*60 + temp->entry.ExpectedTime.min ) < (timeH*60+timeM ))
+            return "Arrived";
 
 
 
-
+        return correctTime(timeH, timeM);
     }
     void removeFlight(std::string fligthNum) {
 
         Node<FlightRec>* removal = nullptr;
         Node<FlightRec>* temp = head;
         
-        if (head->next = nullptr) {
+        if (head->next == nullptr) {
             std::cout << "\n#Empty\n";
             return;
         }
@@ -185,7 +190,7 @@ public:
 
     }
 
-    void print() const {
+    void print()  {
         Node<FlightRec>* temp = head;
 
         if (head == nullptr) {
@@ -200,7 +205,7 @@ public:
                 << std::endl << "Destination: " << temp->entry.Destination //Destination
                 << std::endl << "Time: " << correctTime(temp->entry.Time.hour, temp->entry.Time.min)   //Time
                 << std::endl << "Delay? " << ((temp->entry.Delay == true) ? " Delayed " : " No Delay ")
-                << std::endl << "Expected Time: " << correctTime(temp->entry.ExpectedTime.hour, temp->entry.ExpectedTime.min)
+                << std::endl << "Expected Time: " << checkArrivalTime(temp)
                 << std::endl;  //Is Delayed?
 
             temp = temp->next;
@@ -276,6 +281,25 @@ public:
             }
         } while (ch != '4');
             
+
+
+
+
+        void clearList() const {
+            
+            Node<FlightRec>* temp = head;
+            Node<FlightRec>* removal=nullptr;
+            while (temp != nullptr) {
+                removal - temp;
+                delete removal;
+                temp = temp->next;
+                removal = nullptr;
+
+
+            }
+            head = nullptr;
+
+        }
 
     }
         

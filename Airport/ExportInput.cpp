@@ -9,14 +9,20 @@
 
 
 bool List<FlightRec>::exportTXT() {
+
+	if (head == nullptr) {
+		std::cout << "#Nothing to Export\n";
+		return 0;//I just need to create an empry function...
+	}
+
 	std::ofstream output;
 	output.open("flights.txt");
 
 	Node<FlightRec>* temp = head;
 
-	output <<"#Current time is :" << "\nDepartures\n";
+	output <<"#Current time is :"<<correctTime(timeH,timeM)<< "\nDepartures\n";
 	
-	if (head == nullptr) return 0;//I just need to create an empry function...
+	
 		
 	
 
@@ -28,13 +34,13 @@ bool List<FlightRec>::exportTXT() {
 				<< temp->entry.Destination << " | "
 				<<  correctTime(temp->entry.Time.hour, temp->entry.Time.min) << " | "
 				<< (temp->entry.Delay ? " Delayed " : " Not Delayed ") << " | "
-				<< correctTime(temp->entry.ExpectedTime.hour, temp->entry.ExpectedTime.min) << "\n";
+				<< checkArrivalTime(temp) << "\n";
 
 		}
 		temp = temp->next;
 	}
 	temp = head;
-	output << "\n#Current time is :" << "\nArrivals\n";
+	output << "#Current time is :" << correctTime(timeH, timeM) << "\nArrivals\n";
 	while (temp != nullptr) {
 		if (temp->entry.Ftype == 1) {
 			std::cout << "";
@@ -42,7 +48,7 @@ bool List<FlightRec>::exportTXT() {
 				<< temp->entry.Destination << " | "
 				<< correctTime(temp->entry.Time.hour , temp->entry.Time.min) << " | "
 				<< (temp->entry.Delay ? " Delayed " : " Not Delayed ") << " | "
-				<< correctTime(temp->entry.ExpectedTime.hour, temp->entry.ExpectedTime.min )<< "\n";
+				<< checkArrivalTime(temp) << "\n";
 
 		}
 		temp = temp->next;
@@ -58,7 +64,22 @@ bool List<FlightRec>::exportTXT() {
 }
 
 bool List<FlightRec>::importTXT() const{
+	
+	std::ifstream input;
 
+	input.open("flights.txt");
+
+
+	if (!input.is_open()) {//maybe flights does not exists right now
+		std::cout << "#Error opening file for input\n";
+		return false;
+	}
+
+
+
+	
+
+	
 
 
 	return 1;
