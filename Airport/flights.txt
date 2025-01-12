@@ -1,0 +1,5 @@
+#Current time is :
+Departures
+CY123 | London | 13 : 14 |  Not Delayed  | 14:16
+#Current time is :Arrivals
+CZ117 | Moscow | 14 : 16 |  Delayed  | 17:0

@@ -8,6 +8,12 @@
 
 
 void menu() {
+
+
+
+
+
+
     List<FlightRec> flights;
 
     FlightRec x3;
@@ -16,6 +22,17 @@ void menu() {
     std::string ans;
 
     x3.Ftype = Departure;
+
+
+    do {
+        std::cout << "Enter current time (XX XX, Hours Minutes):";
+        std::cin >> timeH >> timeM;
+
+    } while (correctTime(timeH, timeM) == "Error");
+
+    flights.timeH = timeH; flights.timeM = timeM;
+
+
 
     do {
         // menu
@@ -135,7 +152,8 @@ void menu() {
             ((x3.Ftype == 0) ? x3.Ftype = Arrival : x3.Ftype = Departure);
         }
         case '7': {
-
+            if(flights.exportTXT()==0) std::cout<<"\nList is empty\n";
+            else std::cout << "\nExport complete\n";
 
 
         }

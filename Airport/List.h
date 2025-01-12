@@ -56,9 +56,11 @@ class List {
 public:
     List() { head = nullptr; }
 
+    int timeH, timeM;
     //this func must automatically sort the flights by time
 
     bool exportTXT();
+    bool importTXT() const;
 
     void insertSort(FlightRec& x) {
 
@@ -127,7 +129,12 @@ public:
             }
         }
     }
+    std::string checkArrivalTime() {
 
+
+
+
+    }
     void removeFlight(std::string fligthNum) {
 
         Node<FlightRec>* removal = nullptr;
