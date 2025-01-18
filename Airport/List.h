@@ -56,7 +56,7 @@ class List {
 public:
     List() { head = nullptr; }
 
-    int timeH = 0, timeM = 0;
+    int timeHC = 0, timeMC = 0;
     //this func must automatically sort the flights by time
 
     bool exportTXT();
@@ -133,12 +133,10 @@ public:
 
         if (temp==nullptr) return "Error";//maybe i should just used enum types? Maybe but its too late
 
-        if((temp->entry.ExpectedTime.hour*60 + temp->entry.ExpectedTime.min ) < (timeH*60+timeM ))
+        if((temp->entry.ExpectedTime.hour*60 + temp->entry.ExpectedTime.min ) < (timeHC *60+timeMC))
             return "Arrived";
 
-
-
-        return correctTime(timeH, timeM);
+        return correctTime(temp->entry.ExpectedTime.hour, temp->entry.ExpectedTime.min);
     }
     void removeFlight(std::string fligthNum) {
 
@@ -200,8 +198,9 @@ public:
         }
         while (temp != nullptr) {
             //Flight Number
-            //long cout for Flight Number  Destination  Time
-            std::cout << "\nFlight Number: " << temp->entry.FlightNO
+            //long cout for FlightRec 
+                std::cout << "\nFlight Type: " << ((temp->entry.Ftype==0) ? "Departures": "Arrivals")
+                << std::endl << "Flight Number: " << temp->entry.FlightNO
                 << std::endl << "Destination: " << temp->entry.Destination //Destination
                 << std::endl << "Time: " << correctTime(temp->entry.Time.hour, temp->entry.Time.min)   //Time
                 << std::endl << "Delay? " << ((temp->entry.Delay == true) ? " Delayed " : " No Delay ")
@@ -215,18 +214,28 @@ public:
 
 
     void changeFlight(std::string fligthNum) {
-        Node<FlightRec>* temp = head;
+        Node<FlightRec> *temp=head;
+     
+
+        if (head == nullptr) { std::cout << "List is Empty\nAdd the Flights Firts\n";  return ; }
 
 
-        if (head->next == nullptr) { std::cout << "List is Empty\nAdd the Flights Firts\n";  return ; }
 
+        while (temp != nullptr) {
+            if (temp->entry.FlightNO == fligthNum) break;
+            temp = temp->next;
+        }
+        if (temp == nullptr) {
+            std::cout << "\nFlight is not found\n ";
+            return;
+        }
         char ch; 
         int timeH, timeM;
         
         // Modify flight time
 
         do {
-            std::cout << "\n#Menu#\n1.Change the Flight Time \n2.Change the Expected Time\n3.Change the Raice Delay \n4.Exit\n";
+            std::cout << "\n#Menu#\n1.Change the Flight Time \n2.Change the Raice Delay\n3.Change the Expected Time \n4.Exit\n";
             std::cin >> ch;
 
 
@@ -235,8 +244,9 @@ public:
             case '1': {
 
 
-                std::cout << "Enter the new flight time (XX XX, hours minutes):\n";
+                
                 do {
+                    std::cout << "Enter the new flight time (XX XX, hours minutes):\n";
                     std::cin >> timeH >> timeM;
 
                 } while (correctTime(timeH, timeM) == "Error");
@@ -268,7 +278,7 @@ public:
 
                 temp->entry.ExpectedTime.hour = timeH;
                 temp->entry.ExpectedTime.min = timeM;
-            
+                break;
 
             }
             case '4': {
@@ -286,13 +296,15 @@ public:
     }
     void clear() {
 
+        if (head== nullptr)return;
+
         Node<FlightRec>* temp = head;
         Node<FlightRec>* removal = nullptr;
 
         while (temp != nullptr) {
             removal = temp;
-            delete removal;
             temp = temp->next;
+            delete removal;
             removal = nullptr;
 
 

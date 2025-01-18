@@ -10,11 +10,10 @@
 void menu() {
 
 
-
-
-
-
     List<FlightRec> flights;
+
+
+    flights.importTXT();
 
     FlightRec x3;
     char choice;
@@ -30,7 +29,7 @@ void menu() {
 
     } while (correctTime(timeH, timeM) == "Error");
 
-    flights.timeH = timeH; flights.timeM = timeM;
+    flights.timeHC = timeH; flights.timeMC = timeM;
 
 
 
@@ -39,13 +38,12 @@ void menu() {
         std::cout << "\n#Menu Options#\n";
         std::cout << ((x3.Ftype == 0) ? "Departures" : "Arrivals") << " is selected\n";
         std::cout << "1. Add a new flight instance\n";
-        std::cout << "2. Change arrival time\n";
-        std::cout << "3. Modify flight time or delay status\n";
-        std::cout << "4. Print all flights\n";
-        std::cout << "5. Remove flight by FlightNumber\n";
-        std::cout << "6. Change to the " << ((x3.Ftype == (0+1)%2) ? "Departure" : "Arrivals") << std::endl;
-        std::cout << "7. Export to the File\n";
-        std::cout << "8. Exit\n";
+        std::cout << "2. Modify flight time or delay status\n";
+        std::cout << "3. Print all flights\n";
+        std::cout << "4. Remove flight by FlightNumber\n";
+        std::cout << "5. Change to the " << ((x3.Ftype == (0+1)%2) ? "Departure" : "Arrivals") << std::endl;
+        std::cout << "6. Export to the File\n";
+        std::cout << "7. Exit\n";
 
         std::cout << "Enter your choice: ";
         std::cin >> choice;
@@ -78,6 +76,7 @@ void menu() {
             x3.Time.hour = timeH;
             x3.Time.min = timeM;
 
+
             // Check delay status
             do {
                 std::cout << "Is Raice delayed? y/n\n";
@@ -104,23 +103,9 @@ void menu() {
             std::cout << "Flight added successfully!\n";
             break;
         }
-        case '2': { // Change arrival time
+  
 
-            if (x3.FlightNO.size() != 5) { std::cout << "\nAdd the Flight first:D\n"; break; }
-
-            std::cout << "Enter the new Expected Arrival time (XX XX, hours minutes):\n";
-            do {
-                std::cin >> timeH >> timeM;
-
-            } while (correctTime(timeH, timeM) == "Error");
-
-            x3.ExpectedTime.hour = timeH;
-            x3.ExpectedTime.min = timeM;
-            std::cout << "Expected Arrival time updated successfully!\n";
-            break;
-        }
-
-        case '3': { // Modify flight time or delay
+        case '2': { // Modify flight time or delay
 
             do {
                 std::cout << "Enter the Flight Number to change the Time, Delay status\n";
@@ -131,11 +116,11 @@ void menu() {
             flights.changeFlight(ans);
 
         }
-        case '4': { // Print all flights
+        case '3': { // Print all flights
             flights.print();
             break;
         }
-        case '5': {
+        case '4': {
             do {
 
                 std::cout << "Add the FlightNumber for removal, 5 symbols, |ABC|ABC|NUM|NUM|NUM|\n";
@@ -148,16 +133,15 @@ void menu() {
             break;
 
         }
-        case '6': { //Change the enum type
+        case '5': { //Change the enum type
             ((x3.Ftype == 0) ? x3.Ftype = Arrival : x3.Ftype = Departure);
         }
-        case '7': {
+        case '6': {
             if(flights.exportTXT()==0) std::cout<<"\nList is empty\n";
             else std::cout << "\nExport complete\n";
 
-
         }
-        case '8': { // Exit
+        case '7': { // Exit
             break;
         }
 
@@ -165,7 +149,7 @@ void menu() {
             std::cout << "Invalid choice. Please try again.\n";
         }
 
-    } while (choice != '8');
+    } while (choice != '7');
 
     std::cout << "Exiting the program. Goodbye!\n";
 

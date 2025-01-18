@@ -4,11 +4,10 @@
 #include <fstream>
 #include <string>
 
-#include "Prototype.h" 
 
 int main()
 {
-  
+
 
     //pretty much space here, yeah?
     menu();

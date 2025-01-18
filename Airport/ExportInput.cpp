@@ -3,100 +3,102 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-
 #include "List.h"
 
-
-
 bool List<FlightRec>::exportTXT() {
+    if (head == nullptr) {
+        std::cout << "# Nothing to export\n";
+        return false;
+    }
 
-	if (head == nullptr) {
-		std::cout << "#Nothing to Export\n";
-		return 0;//I just need to create an empry function...
-	}
+    std::ofstream output("flights.txt", std::ios::out);
+    if (!output.is_open()) {
+        std::cout << "# Error: Unable to open file for writing\n";
+        return false;
+    }
 
-	std::ofstream output;
-	output.open("flights.txt");
+    Node<FlightRec>* temp = head;
 
-	Node<FlightRec>* temp = head;
+    // Export departures
+    output << "Current time is: " << correctTime(timeHC, timeMC) << "\nDepartures\n";
+    while (temp != nullptr) {
+        if (temp->entry.Ftype == Departure) {
+            output << "### Flight Number: " << temp->entry.FlightNO << "\n"
+                << "Destination: " << temp->entry.Destination << "\n"
+                << "Time: " << temp->entry.Time.hour << ":"
+                << (temp->entry.Time.min < 10 ? "0" : "") << temp->entry.Time.min << "\n"
+                << "Delay? " << (temp->entry.Delay ? "Delayed" : "No Delay") << "\n"
+                << "Expected Time: " << temp->entry.ExpectedTime.hour << ":"
+                << (temp->entry.ExpectedTime.min < 10 ? "0" : "") << temp->entry.ExpectedTime.min << "\n\n";
+        }
+        temp = temp->next;
+    }
 
-	output <<"#Current time is :"<<correctTime(timeH,timeM)<< "\nDepartures\n";
-	
-	
+    // Export arrivals
+    temp = head;
+    output << "Arrivals\n";
+    while (temp != nullptr) {
+        if (temp->entry.Ftype == Arrival) {
+            output << "### Flight Number: " << temp->entry.FlightNO << "\n"
+                << "Destination: " << temp->entry.Destination << "\n"
+                << "Time: " << temp->entry.Time.hour << ":"
+                << (temp->entry.Time.min < 10 ? "0" : "") << temp->entry.Time.min << "\n"
+                << "Delay? " << (temp->entry.Delay ? "Delayed" : "No Delay") << "\n"
+                << "Expected Time: " << temp->entry.ExpectedTime.hour << ":"
+                << (temp->entry.ExpectedTime.min < 10 ? "0" : "") << temp->entry.ExpectedTime.min << "\n\n";
+        }
+        temp = temp->next;
+    }
 
-
-	while (temp != nullptr) {
-		if (temp->entry.Ftype == 0) {
-			std::cout << "";
-			output << temp->entry.FlightNO << " | "
-				<< temp->entry.Destination << " | "
-				<<  correctTime(temp->entry.Time.hour, temp->entry.Time.min) << " | "
-				<< (temp->entry.Delay ? " Delayed " : " Not Delayed ") << " | "
-				<< checkArrivalTime(temp) << "\n";
-
-		}
-		temp = temp->next;
-	}
-	temp = head;
-	output << "#Current time is :" << correctTime(timeH, timeM) << "\nArrivals\n";
-	while (temp != nullptr) {
-		if (temp->entry.Ftype == 1) {
-			std::cout << "";
-			output << temp->entry.FlightNO << " | "
-				<< temp->entry.Destination << " | "
-				<< correctTime(temp->entry.Time.hour , temp->entry.Time.min) << " | "
-				<< (temp->entry.Delay ? " Delayed " : " Not Delayed ") << " | "
-				<< checkArrivalTime(temp) << "\n";
-
-		}
-		temp = temp->next;
-	}
-
-
-
-	output.close();
-	
-	return 1;
+    output.close();
+    return true;
 }
 
-bool List<FlightRec>::importTXT(){
-	
-	Node<FlightRec>* temp = head;
+bool List<FlightRec>::importTXT() {
+    std::ifstream input("flights.txt", std::ios::in);
+    if (!input.is_open()) {
+        std::cout << "# Error: Unable to open file for reading\n";
+        return false;
+    }
 
-	std::ifstream input;
-	std::string line;
-	//clear memo before inputing
-	clear();
+    clear(); 
 
-	input.open("flights.txt");
+    std::string line;
+    FlightRec flight;
+    bool isDeparture = false;
 
+    while (std::getline(input, line)) {
+        // Определяем тип рейсов
+        if (line.find("Departures") != std::string::npos) {
+            isDeparture = true;
+            continue;
+        }
+        else if (line.find("Arrivals") != std::string::npos) {
+            isDeparture = false;
+            continue;
+        }
 
-	if (!input.is_open()) {//maybe flights does not exists right now
-		std::cout << "#Error opening file for input\n";
-		return false;
-	}
+     
+        if (line.find("### Flight Number:") != std::string::npos) {
+            flight.Ftype = isDeparture ? Departure : Arrival;
+            flight.FlightNO = line.substr(line.find(":") + 2);
+            std::getline(input, line);
+            flight.Destination = line.substr(line.find(":") + 2);
+            std::getline(input, line);
+            sscanf_s(line.c_str(), "Time: %d:%d", &flight.Time.hour, &flight.Time.min);
+            std::getline(input, line);
+            flight.Delay = (line.find("Delayed") != std::string::npos);
+            std::getline(input, line);
+            sscanf_s(line.c_str(), "Expected Time: %d:%d", &flight.ExpectedTime.hour, &flight.ExpectedTime.min);
+            if (!flight.FlightNO.empty() && !flight.Destination.empty()) {
+                insertSort(flight);
+            }
+            else {
+                std::cout << "# Error: Invalid flight data encountered\n";
+            }
+        }
+    }
 
-	while (!input.eof()) {
-		while (std::getline(input, line)) {
-
-			if (line.find("Departures")) temp->entry.Ftype = Departure;
-			if (line.find("Arrivals")) temp->entry.Ftype = Arrival;
-
-
-
-
-		}
-
-
-
-
-	}
-
-
-	
-
-	
-
-
-	return 1;
+    input.close();
+    return true;
 }
