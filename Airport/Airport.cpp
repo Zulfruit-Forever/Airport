@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 
-
+#include "Prototype.h" 
 int main()
 {
 

@@ -24,7 +24,7 @@ void menu() {
 
 
     do {
-        std::cout << "Enter current time (XX XX, Hours Minutes):";
+        std::cout << "Enter current time (XX XX, Hours Minutes ,like 13 14):";
         std::cin >> timeH >> timeM;
 
     } while (correctTime(timeH, timeM) == "Error");
@@ -54,7 +54,7 @@ void menu() {
 
             // Add the FlightNumber
             do {
-                std::cout << "Add the FlightNumber, 5 symbols, |ABC|ABC|NUM|NUM|NUM|\n";
+                std::cout << "Add the FlightNumber, 5 symbols, |ABC|ABC|NUM|NUM|NUM| aka CY123\n";
                 std::cin >> ans;
 
             } while (!correctCode(ans));
@@ -137,8 +137,7 @@ void menu() {
             ((x3.Ftype == 0) ? x3.Ftype = Arrival : x3.Ftype = Departure);
         }
         case '6': {
-            if(flights.exportTXT()==0) std::cout<<"\nList is empty\n";
-            else std::cout << "\nExport complete\n";
+            flights.exportTXT();
 
         }
         case '7': { // Exit
