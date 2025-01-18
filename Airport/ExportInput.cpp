@@ -53,14 +53,14 @@ bool List<FlightRec>::exportTXT() {
     output.close();
     return true;
 }
-
+//Import from the flight txt file 
 bool List<FlightRec>::importTXT() {
     std::ifstream input("flights.txt", std::ios::in);
     if (!input.is_open()) {
         std::cout << "# Error: Unable to open file for reading\n";
         return false;
     }
-
+    //clear all instances in List before importing new
     clear(); 
 
     std::string line;
@@ -68,7 +68,7 @@ bool List<FlightRec>::importTXT() {
     bool isDeparture = false;
 
     while (std::getline(input, line)) {
-        // Определяем тип рейсов
+
         if (line.find("Departures") != std::string::npos) {
             isDeparture = true;
             continue;
@@ -78,7 +78,7 @@ bool List<FlightRec>::importTXT() {
             continue;
         }
 
-     
+            //If it finds ### fstream starts reading from the files
         if (line.find("### Flight Number:") != std::string::npos) {
             flight.Ftype = isDeparture ? Departure : Arrival;
             flight.FlightNO = line.substr(line.find(":") + 2);
